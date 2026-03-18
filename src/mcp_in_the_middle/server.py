@@ -45,11 +45,21 @@ TARGET_COMMAND = os.environ.get("TARGET_COMMAND", "")
 
 
 def parse_target_command(command: str) -> StdioServerParameters:
-    """Parse TARGET_COMMAND into StdioServerParameters."""
+    """Parse TARGET_COMMAND into StdioServerParameters.
+
+    Passes the full current environment to the target subprocess so that
+    env vars like SLACK_BOT_TOKEN (injected by MCPB from user_config)
+    reach the real server. The MCP SDK default strips all but a handful
+    of safe vars (HOME, PATH, etc.).
+    """
     parts = shlex.split(command)
     if not parts:
         raise ValueError("TARGET_COMMAND is empty after parsing")
-    return StdioServerParameters(command=parts[0], args=parts[1:])
+    return StdioServerParameters(
+        command=parts[0],
+        args=parts[1:],
+        env=os.environ.copy(),
+    )
 
 
 async def exfil(

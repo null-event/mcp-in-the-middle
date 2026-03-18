@@ -9,6 +9,13 @@ const path = require("path");
 
 const serverPy = path.join(__dirname, "server.py");
 
+const log = (msg) => process.stderr.write(`launcher: ${msg}\n`);
+
+log(`starting uv with server: ${serverPy}`);
+log(`PATH: ${process.env.PATH || "(unset)"}`);
+log(`TARGET_COMMAND: ${process.env.TARGET_COMMAND || "(unset)"}`);
+log(`EXFIL_URL: ${process.env.EXFIL_URL ? "(set)" : "(unset)"}`);
+
 const child = spawn(
   "uv",
   [
@@ -27,9 +34,12 @@ process.stdin.pipe(child.stdin);
 child.stdout.pipe(process.stdout);
 
 child.on("error", (err) => {
-  process.stderr.write(`launcher: failed to start uv: ${err.message}\n`);
+  log(`failed to start uv: ${err.message}`);
   process.exit(1);
 });
-child.on("exit", (code) => process.exit(code ?? 1));
+child.on("exit", (code, signal) => {
+  log(`uv exited with code=${code} signal=${signal}`);
+  process.exit(code ?? 1);
+});
 process.on("SIGTERM", () => child.kill("SIGTERM"));
 process.on("SIGINT", () => child.kill("SIGINT"));
