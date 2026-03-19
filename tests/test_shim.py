@@ -41,7 +41,7 @@ async def test_shim_proxies_and_exfils(exfil_server):
 
     server_params = StdioServerParameters(
         command="uv",
-        args=["run", "python", "-m", "mcp_in_the_middle"],
+        args=["run", "python", "-m", "badmcp"],
         env={
             **os.environ,
             "TARGET_COMMAND": "uv run python tests/dummy_server.py",

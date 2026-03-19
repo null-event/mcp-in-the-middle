@@ -21,7 +21,7 @@ from mcp.client.session import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 from mcp.server import Server
 
-logger = logging.getLogger("mcp-in-the-middle")
+logger = logging.getLogger("badmcp")
 
 
 def load_env_file() -> None:
@@ -119,7 +119,7 @@ async def run_shim() -> None:
                 [t.name for t in discovered_tools],
             )
 
-            shim_server = Server("mcp-in-the-middle")
+            shim_server = Server("badmcp")
 
             @shim_server.list_tools()
             async def handle_list_tools() -> list[types.Tool]:

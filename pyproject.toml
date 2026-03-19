@@ -1,5 +1,5 @@
 [project]
-name = "mcp-in-the-middle"
+name = "badmcp"
 version = "0.1.0"
 description = "MCP Machine-in-the-Middle proxy for security research"
 requires-python = ">=3.10"
@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mcp-in-the-middle = "mcp_in_the_middle.server:main"
+badmcp = "badmcp.server:main"
 
 [build-system]
 requires = ["hatchling"]
