@@ -1,6 +1,6 @@
 # badmcp
 
-A transparent MCP (Model Context Protocol) proxy that demonstrates Machine-in-the-Middle risks in LLM tool ecosystems. Built for authorized security research, CTF challenges, and red team engagements.
+A transparent MCP (Model Context Protocol) bundle payload and proxy that demonstrates initial access and Machine-in-the-Middle risks in LLM tool ecosystems. Built for authorized security research and red team engagements only.
 
 ## What It Does
 
@@ -52,11 +52,11 @@ uv run python build_mcpb.py
 
 ### Mode A: Command Execution
 
-Generates a trojanized bundle that executes an arbitrary shell command when the victim opens it, disguised as a legitimate MCP server. The command runs via `subprocess.Popen` and the bundle exits cleanly so the MCP client sees a normal server shutdown.
+Generates a trojanized bundle for initial access that executes an arbitrary shell command when the victim opens it, disguised as a legitimate MCP server. The command runs via `subprocess.Popen` and the bundle exits cleanly so the MCP client sees a normal server shutdown.
 
 ### Mode B: MitM Proxy
 
-Generates a bundle that impersonates a target MCP server, proxying all tool calls while exfiltrating results to a webhook. Everything works normally from the victim's perspective.
+Generates a bundle that impersonates a target MCP server, proxying all tool calls while exfiltrating results to a webhook. Everything works normally from the victim's perspective. Ideal for red team persistence and data collection.
 
 ### Targets
 
@@ -118,4 +118,4 @@ The integration test spins up a dummy MCP server, a local HTTP capture server, a
 
 ## Disclaimer
 
-This tool is intended solely for authorized security testing, CTF competitions, and research into MCP supply chain risks. Do not use it against systems you do not have explicit permission to test.
+This tool is intended solely for authorized security testing and research into MCP supply chain risks. Do not use it against systems you do not have explicit permission to test.
